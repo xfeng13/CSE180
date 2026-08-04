@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASU CSE180 Module 6: Digital Skills Challenge</title>
+  <style>
+    :root{
+      --bg:#f6f8fc; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+      --line:#d8e0ea; --accent:#2563eb; --accent2:#0f766e; --ok:#166534;
+      --warn:#92400e; --shadow:0 10px 30px rgba(15,23,42,.08); --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.08), transparent 25%),
+        radial-gradient(circle at top right, rgba(15,118,110,.08), transparent 25%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1120px;margin:0 auto;padding:24px 16px 48px}
+    .hero{
+      background:linear-gradient(135deg,#fff,#f0f7ff);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      margin-bottom:20px;
+    }
+    .eyebrow{
+      display:inline-block;
+      font-size:.82rem;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--accent);
+      background:rgba(37,99,235,.08);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-bottom:12px;
+    }
+    h1{margin:0 0 10px;font-size:clamp(2rem,4vw,3.2rem);line-height:1.05}
+    .sub{margin:0;color:var(--muted);max-width:900px;font-size:1.02rem}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}
+    @media (max-width:960px){.grid{grid-template-columns:1fr}}
+    .card,.mission{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .panel{padding:20px}
+    .panel-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin:0 0 10px}
+    .small{color:var(--muted);font-size:.92rem}
+    .progress-row{margin-top:14px}
+    .progress-bar{height:14px;background:#edf2f7;border-radius:999px;overflow:hidden;border:1px solid #d6dde8}
+    .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:999px;transition:width .35s ease}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .stat{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:12px}
+    .stat .label{color:var(--muted);font-size:.8rem}
+    .stat .value{font-size:1.2rem;font-weight:800;margin-top:3px}
+    .missions{display:grid;gap:16px}
+    .mission{overflow:hidden}
+    .mission.done{border-color:rgba(22,101,52,.35)}
+    .mission-head{
+      padding:18px 18px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+    .mission-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .mission h2{margin:0;font-size:1.2rem}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:.78rem;font-weight:700;
+      color:var(--accent2);background:rgba(15,118,110,.08);
+      border-radius:999px;padding:6px 10px;margin-top:8px
+    }
+    .mission.done .badge{color:var(--ok);background:rgba(22,101,52,.08)}
+    .mission-body{padding:18px}
+    .instructions{margin:0 0 14px;color:var(--muted)}
+    .field-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin:12px 0 14px
+    }
+    @media (max-width:640px){.field-grid{grid-template-columns:1fr}}
+    .label-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+    label{display:block;font-size:.9rem;font-weight:700;margin-bottom:6px}
+    input,select,textarea{
+      width:100%;
+      border:1px solid #cfd8e3;
+      background:#fff;
+      border-radius:14px;
+      padding:12px 13px;
+      font:inherit;
+      color:var(--text);
+      outline:none;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(37,99,235,.65);
+      box-shadow:0 0 0 4px rgba(37,99,235,.12)
+    }
+    textarea{min-height:92px;resize:vertical}
+    .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    @media (max-width:640px){.choices{grid-template-columns:1fr}}
+    .choice{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+      min-height:46px;
+      display:flex;
+      align-items:center;
+    }
+    .choice:hover{border-color:#9db7ff}
+    .choice input{width:auto;margin-right:8px;transform:translateY(1px)}
+    .choice.selected{border-color:rgba(37,99,235,.75);background:rgba(37,99,235,.05)}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    button{
+      border:none;
+      border-radius:14px;
+      padding:11px 16px;
+      font:inherit;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .primary{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#fff}
+    .ghost{background:#f3f4f6;color:#374151}
+    .helper{color:var(--muted);font-size:.92rem;margin-top:10px}
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+      display:none;
+    }
+    .feedback.ok{display:block;border-color:rgba(22,101,52,.25);background:rgba(22,101,52,.06);color:var(--ok)}
+    .feedback.warn{display:block;border-color:rgba(146,64,14,.25);background:rgba(146,64,14,.06);color:var(--warn)}
+    .final{
+      margin-top:18px;
+      border:2px dashed rgba(37,99,235,.35);
+      background:linear-gradient(180deg,#fff,#f8fbff);
+      border-radius:24px;
+      padding:18px;
+    }
+    .code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:1.1rem;
+      font-weight:800;
+      letter-spacing:.06em;
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#0f172a;
+      color:#fff;
+      margin-top:10px
+    }
+    .sticky{position:sticky;top:18px}
+    .checkpoint{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:.82rem;font-weight:800;
+      color:#065f46;background:#ecfdf5;
+      border-radius:999px;
+      padding:6px 10px
+    }
+    .done-mark{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:26px;height:26px;border-radius:999px;
+      background:#dcfce7;color:#166534;font-weight:900
+    }
+    .note{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      margin-top:12px
+    }
+    .footer{
+      color:var(--muted);
+      font-size:.88rem;
+      margin-top:18px;
+      text-align:center
+    }
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:640px){.split{grid-template-columns:1fr}}
+    .pill{
+      display:inline-block;
+      margin:4px 8px 0 0;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:.86rem
+    }
+    .callout{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fbfdff;
+      padding:14px;
+      margin:12px 0 14px;
+    }
+    .callout h3{
+      margin:0 0 8px;
+      font-size:1rem;
+    }
+    .triples{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:10px;
+    }
+    @media (max-width:900px){.triples{grid-template-columns:1fr}}
+    .triples .box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#fff;
+    }
+    .box strong{display:block;margin-bottom:6px}
+    .mini{
+      font-size:.88rem;
+      color:var(--muted)
+    }
+    .topbar{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px
+    }
+    .device-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-weight:700;
+    }
+    .device-btn.active{
+      background:rgba(37,99,235,.09);
+      border-color:rgba(37,99,235,.28);
+      color:#1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Module 6 · Chapter 3</div>
+      <h1>ASU CSE180 - Digital Skills Challenge</h1>
+      <p class="sub">
+        Explore your device, discover useful built-in tools, and learn practical system software and AI skills.
+        Finish all 6 missions to unlock your completion code for the Canvas quiz.
+      </p>
+
+      <div class="topbar">
+        <span class="small"><strong>Choose your device:</strong></span>
+        <button class="device-btn active" data-device="Windows PC">Windows PC</button>
+        <button class="device-btn" data-device="MacBook">MacBook</button>
+        <button class="device-btn" data-device="Cellphone">Cellphone</button>
+      </div>
+
+      <div class="progress-row">
+        <div class="small" id="progressText">0 of 6 missions completed</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+          <div class="stat"><div class="label">Device</div><div class="value" id="deviceTypeStat">Windows PC</div></div>
+          <div class="stat"><div class="label">Missions done</div><div class="value" id="missionsDoneStat">0</div></div>
+          <div class="stat"><div class="label">Status</div><div class="value" id="statusStat">Ready</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="missions">
+        <section class="mission" id="mission1">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>1. Device Detective</h2>
+                <div class="small">Find your operating system, memory, and storage.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 1</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">Follow the instructions for your device, then record what you found.</p>
+            <div class="callout">
+              <h3>Where to find it</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Windows PC</strong>
+                  <div class="mini">Settings → System → About</div>
+                  <div class="mini">Look for: Windows edition, RAM, device specs.</div>
+                </div>
+                <div class="box">
+                  <strong>MacBook</strong>
+                  <div class="mini">Apple menu → About This Mac</div>
+                  <div class="mini">Look for: macOS version, chip, memory, storage.</div>
+                </div>
+                <div class="box">
+                  <strong>Cellphone</strong>
+                  <div class="mini">Settings → About / About phone / General → About</div>
+                  <div class="mini">Look for: iOS or Android version, model, storage.</div>
+                </div>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div><label for="deviceType">Device type</label><select id="deviceType"><option>Windows PC</option><option>MacBook</option><option>Cellphone</option></select></div>
+              <div><label for="osName">Operating system name/version</label><input id="osName" placeholder="Example: Windows 11, macOS 15, iOS 18, Android 15" /></div>
+              <div><label for="ram">Installed memory / RAM</label><input id="ram" placeholder="Example: 8 GB" /></div>
+              <div><label for="storage">Storage amount</label><input id="storage" placeholder="Example: 256 GB" /></div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="1">Check mission</button><button class="ghost" data-reset="1">Reset</button></div>
+            <div class="feedback" id="fb1"></div>
+          </div>
+        </section>
+
+        <section class="mission" id="mission2">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>2. Storage Detective</h2>
+                <div class="small">Check storage, clean up safely, and free space.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 2</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">Open your storage settings, identify the biggest space user, and do one safe cleanup step.</p>
+            <div class="callout">
+              <h3>Where to find storage</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Windows PC</strong>
+                  <div class="mini">Settings → System → Storage</div>
+                  <div class="mini">Then open Temporary files, Apps, or Cleanup recommendations.</div>
+                </div>
+                <div class="box">
+                  <strong>MacBook</strong>
+                  <div class="mini">Apple menu → System Settings → General → Storage</div>
+                  <div class="mini">Review recommendations, Documents, Apps, and Trash.</div>
+                </div>
+                <div class="box">
+                  <strong>Cellphone</strong>
+                  <div class="mini">iPhone: Settings → General → iPhone Storage</div>
+                  <div class="mini">Android: Settings → Storage</div>
+                </div>
+              </div>
+            </div>
+            <div class="callout">
+              <h3>Safe cleanup ideas</h3>
+              <div class="mini">Delete old downloads, remove unused apps, empty Recycle Bin/Trash, clear screenshots, or move photos/videos to cloud storage.</div>
+            </div>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="storageCat" value="Apps">Apps</label>
+              <label class="choice"><input type="radio" name="storageCat" value="Photos/Videos">Photos/Videos</label>
+              <label class="choice"><input type="radio" name="storageCat" value="Documents/Downloads">Documents/Downloads</label>
+              <label class="choice"><input type="radio" name="storageCat" value="System files">System files</label>
+            </div>
+            <div class="field-grid" style="margin-top:14px">
+              <div><label for="cleanup">What did you clean up?</label><input id="cleanup" placeholder="Example: deleted old screenshots" /></div>
+              <div><label for="storageTip">What is one safe storage tip?</label><input id="storageTip" placeholder="Example: empty Trash after deleting files" /></div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="2">Check mission</button><button class="ghost" data-reset="2">Reset</button></div>
+            <div class="feedback" id="fb2"></div>
+          </div>
+        </section>
+
+        <section class="mission" id="mission3">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>3. Hidden Utility Explorer</h2>
+                <div class="small">Try two useful tools that most students never use.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 3</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">
+              You will try <strong>Snipping Tool</strong> and <strong>Voice Typing</strong>.
+              Use the links if you need help, then complete the quick tasks below.
+            </p>
+            <div class="callout">
+              <h3>Find the tools</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Snipping Tool</strong>
+                  <div class="mini">Windows: Start menu → search “Snipping Tool”</div>
+                  <div class="mini">Task: take a screenshot of anything on your screen.</div>
+                  <div class="mini"><a href="https://www.youtube.com/watch?v=tF48865V7os" target="_blank" rel="noopener">Watch a short tutorial</a></div>
+                </div>
+                <div class="box">
+                  <strong>Voice Typing</strong>
+                  <div class="mini">Windows: press Win + H in a text box</div>
+                  <div class="mini">Task: dictate 1–2 sentences into a text field.</div>
+                  <div class="mini"><a href="https://www.youtube.com/watch?v=DrrSAa_L3Mo" target="_blank" rel="noopener">Watch a short tutorial</a></div>
+                </div>
+                <div class="box">
+                  <strong>Tip</strong>
+                  <div class="mini">If you are on a Mac or cellphone, use the closest built-in screenshot or dictation feature on your device.</div>
+                </div>
+              </div>
+            </div>
+            <div class="split">
+              <div>
+                <label for="utility1">What did you capture or dictate?</label>
+                <textarea id="utility1" placeholder="Example: I captured my desktop and dictated a paragraph about class."></textarea>
+              </div>
+              <div>
+                <label for="utility2">What shortcut or action did you learn?</label>
+                <textarea id="utility2" placeholder="Example: I learned Win + H opens voice typing."></textarea>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div><label for="utilityUse">How could this help you in school?</label><input id="utilityUse" placeholder="Example: I can submit cleaner notes and screenshots." /></div>
+              <div><label for="utilityRate">How useful was it?</label><select id="utilityRate"><option value="">Select one</option><option>Very useful</option><option>Somewhat useful</option><option>Not sure yet</option></select></div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="3">Check mission</button><button class="ghost" data-reset="3">Reset</button></div>
+            <div class="feedback" id="fb3"></div>
+          </div>
+        </section>
+
+        <section class="mission" id="mission4">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>4. AI Explorer: Google Lens Detective</h2>
+                <div class="small">Use Google Lens to identify an object, copy text, or translate.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 4</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">
+              Google Lens is an AI tool that can see images, read text, and help you search what you are looking at.
+              Try it on your phone or computer and complete the tasks below.
+            </p>
+            <div class="callout">
+              <h3>Where to find Google Lens</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Windows PC / MacBook</strong>
+                  <div class="mini">Open <a href="https://lens.google.com/" target="_blank" rel="noopener">lens.google.com</a> in your browser.</div>
+                  <div class="mini">Or in Chrome, right-click an image and choose “Search image with Google Lens.”</div>
+                </div>
+                <div class="box">
+                  <strong>Android phone</strong>
+                  <div class="mini">Open the Google app or Google Photos.</div>
+                  <div class="mini">Tap the Lens camera icon.</div>
+                </div>
+                <div class="box">
+                  <strong>iPhone</strong>
+                  <div class="mini">Open the Google app or Google Photos.</div>
+                  <div class="mini">Tap the Lens icon, or use Lens on a photo in Google Photos.</div>
+                </div>
+              </div>
+            </div>
+            <div class="callout">
+              <h3>Try these 3 Lens tasks</h3>
+              <div class="mini"><strong>1. Identify an object:</strong> point Lens at a plant, snack, shoe, or classroom object and see what it finds.</div>
+              <div class="mini"><strong>2. Copy text:</strong> point Lens at printed text and try copying it into a note or message.</div>
+              <div class="mini"><strong>3. Translate text:</strong> point Lens at a sign, menu, or label in another language and try the translate feature.</div>
+            </div>
+            <div class="split">
+              <div>
+                <label for="lensObject">What object or image did you scan?</label>
+                <textarea id="lensObject" placeholder="Example: a flower, a book cover, or a snack package"></textarea>
+              </div>
+              <div>
+                <label for="lensAction">Which Lens action did you try?</label>
+                <textarea id="lensAction" placeholder="Example: identify, copy text, or translate"></textarea>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div>
+                <label for="lensResult">What did Lens do well?</label>
+                <input id="lensResult" placeholder="Example: it copied the text correctly" />
+              </div>
+              <div>
+                <label for="lensUse">How could this help you in class or daily life?</label>
+                <input id="lensUse" placeholder="Example: copying notes from a handout" />
+              </div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="4">Check mission</button><button class="ghost" data-reset="4">Reset</button></div>
+            <div class="feedback" id="fb4"></div>
+          </div>
+        </section>
+
+        <section class="mission" id="mission5">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>5. Security Guardian</h2>
+                <div class="small">Check and improve your device security settings.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 5</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">Follow the steps below and complete at least one security improvement if possible.</p>
+            <div class="callout">
+              <h3>Where to find security settings</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Windows PC</strong>
+                  <div class="mini">Settings → Privacy & security → Windows Security</div>
+                  <div class="mini">Check: Virus & threat protection, Firewall, Windows Update, Sign-in options.</div>
+                </div>
+                <div class="box">
+                  <strong>MacBook</strong>
+                  <div class="mini">System Settings → Privacy & Security</div>
+                  <div class="mini">Check: Software Update, FileVault, Password, Touch ID, Find My.</div>
+                </div>
+                <div class="box">
+                  <strong>Cellphone</strong>
+                  <div class="mini">iPhone: Settings → Face ID / Passcode, Privacy & Security, General → Software Update</div>
+                  <div class="mini">Android: Settings → Security & privacy, System update, Find My Device</div>
+                </div>
+              </div>
+            </div>
+            <div class="callout">
+              <h3>Good security habits</h3>
+              <div class="mini">Turn on automatic updates, use a strong passcode or password, enable biometric sign-in if available, and make sure your device can be found or locked remotely.</div>
+            </div>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="securityItem" value="Automatic updates">Automatic updates</label>
+              <label class="choice"><input type="radio" name="securityItem" value="Passcode / PIN / Face ID / fingerprint">Passcode / PIN / Face ID / fingerprint</label>
+              <label class="choice"><input type="radio" name="securityItem" value="Firewall / security app">Firewall / security app</label>
+              <label class="choice"><input type="radio" name="securityItem" value="Find My / Find My Device">Find My / Find My Device</label>
+            </div>
+            <div class="field-grid" style="margin-top:14px">
+              <div><label for="securityLearn">What security setting did you check?</label><input id="securityLearn" placeholder="Example: automatic updates were on" /></div>
+              <div><label for="securityReason">What improvement did you make or confirm?</label><input id="securityReason" placeholder="Example: turned on a stronger passcode" /></div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="5">Check mission</button><button class="ghost" data-reset="5">Reset</button></div>
+            <div class="feedback" id="fb5"></div>
+          </div>
+        </section>
+
+        <section class="mission" id="mission6">
+          <div class="mission-head">
+            <div class="mission-top">
+              <div>
+                <h2>6. Performance Pro</h2>
+                <div class="small">Learn one safe way to help your device run better.</div>
+              </div>
+              <div class="checkpoint">Checkpoint 6</div>
+            </div>
+          </div>
+          <div class="mission-body">
+            <p class="instructions">Check one performance or battery setting and complete one safe improvement.</p>
+            <div class="callout">
+              <h3>Where to find performance tools</h3>
+              <div class="triples">
+                <div class="box">
+                  <strong>Windows PC</strong>
+                  <div class="mini">Task Manager → Startup apps</div>
+                  <div class="mini">Settings → System → Power & battery</div>
+                  <div class="mini">Settings → System → Storage</div>
+                </div>
+                <div class="box">
+                  <strong>MacBook</strong>
+                  <div class="mini">System Settings → General → Login Items</div>
+                  <div class="mini">Activity Monitor to see active apps</div>
+                  <div class="mini">System Settings → Battery / Storage</div>
+                </div>
+                <div class="box">
+                  <strong>Cellphone</strong>
+                  <div class="mini">Settings → Battery</div>
+                  <div class="mini">Settings → Apps / Background app refresh / Battery usage</div>
+                  <div class="mini">Settings → Storage</div>
+                </div>
+              </div>
+            </div>
+            <div class="callout">
+              <h3>Safe performance ideas</h3>
+              <div class="mini">Close unused apps, remove one startup app, turn on battery saver or low power mode, restart the device, or delete files you no longer need.</div>
+            </div>
+            <div class="field-grid">
+              <div><label for="perfAction">What did you change or check?</label><input id="perfAction" placeholder="Example: turned on battery saver" /></div>
+              <div><label for="perfBenefit">What improvement did you notice?</label><input id="perfBenefit" placeholder="Example: the battery estimate looked better" /></div>
+            </div>
+            <div class="split">
+              <div><label for="perfApp">Which app or setting was involved?</label><textarea id="perfApp" placeholder="Example: a startup app, low power mode, or Storage Sense"></textarea></div>
+              <div><label for="perfLearn">What did you learn?</label><textarea id="perfLearn" placeholder="Example: not every slow computer needs a new one"></textarea></div>
+            </div>
+            <div class="toolbar"><button class="primary" data-check="6">Check mission</button><button class="ghost" data-reset="6">Reset</button></div>
+            <div class="feedback" id="fb6"></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="sticky">
+        <div class="card panel">
+          <div class="panel-title">
+            <strong>Challenge Dashboard</strong>
+            </div>
+          <div class="small">Finish all 6 missions to unlock your completion code.</div>
+          
+          <div class="final" id="finalBox" style="display:none">
+            <div class="badge" style="margin-top:0">Challenge complete</div>
+            <h3 style="margin:10px 0 8px">You finished all 6 missions!</h3>
+            <div class="small">Copy this code into the Canvas quiz:</div>
+            <div class="code" id="completionCode">DSC-READY</div>
+            <div class="helper">Keep this code private and submit it on Canvas Module #6 checkpoint.</div>
+          </div>
+
+          <div class="final" id="lockedBox">
+            <div class="badge" style="margin-top:0">Locked</div>
+            <h3 style="margin:10px 0 8px">Complete the missions to unlock your code</h3>
+            <div class="small">Your progress will show here automatically.</div>
+          </div>
+
+          <div style="margin-top:16px">
+            <strong>What students learn</strong>
+            <div style="margin-top:8px">
+              <span class="pill">Operating system</span>
+              <span class="pill">Storage</span>
+              <span class="pill">Utilities</span>
+              <span class="pill">AI tools</span>
+              <span class="pill">Security</span>
+              <span class="pill">Performance</span>
+            </div>
+          </div>
+          
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const state = {1:false,2:false,3:false,4:false,5:false,6:false};
+    const savedKey = 'digital-skills-challenge-v2';
+    const deviceButtons = document.querySelectorAll('.device-btn');
+    let currentDevice = 'Windows PC';
+
+    const norm = v => (v || '').toString().trim();
+    const hasText = id => norm(document.getElementById(id).value).length > 0;
+    const selectedRadio = name => {
+      const el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : '';
+    };
+
+    function updateChoiceStyles(name){
+      document.querySelectorAll('input[name="' + name + '"]').forEach(r => {
+        const label = r.closest('.choice');
+        if(label) label.classList.toggle('selected', r.checked);
+      });
+    }
+
+    function saveProgress(){
+      const data = {
+        state,
+        currentDevice,
+        fields: {
+          deviceType: document.getElementById('deviceType').value,
+          osName: document.getElementById('osName').value,
+          ram: document.getElementById('ram').value,
+          storage: document.getElementById('storage').value,
+          cleanup: document.getElementById('cleanup').value,
+          storageTip: document.getElementById('storageTip').value,
+          utility1: document.getElementById('utility1').value,
+          utility2: document.getElementById('utility2').value,
+          utilityUse: document.getElementById('utilityUse').value,
+          utilityRate: document.getElementById('utilityRate').value,
+          lensObject: document.getElementById('lensObject').value,
+          lensAction: document.getElementById('lensAction').value,
+          lensResult: document.getElementById('lensResult').value,
+          lensUse: document.getElementById('lensUse').value,
+          securityLearn: document.getElementById('securityLearn').value,
+          securityReason: document.getElementById('securityReason').value,
+          perfAction: document.getElementById('perfAction').value,
+          perfBenefit: document.getElementById('perfBenefit').value,
+          perfApp: document.getElementById('perfApp').value,
+          perfLearn: document.getElementById('perfLearn').value
+        },
+        radios: {
+          storageCat: selectedRadio('storageCat'),
+          securityItem: selectedRadio('securityItem')
+        }
+      };
+      localStorage.setItem(savedKey, JSON.stringify(data));
+    }
+
+    function loadProgress(){
+      const raw = localStorage.getItem(savedKey);
+      if(!raw) return;
+      try{
+        const data = JSON.parse(raw);
+        Object.assign(state, data.state || {});
+        currentDevice = data.currentDevice || currentDevice;
+        const f = data.fields || {};
+        Object.entries(f).forEach(([k,v]) => { const el = document.getElementById(k); if(el) el.value = v; });
+        if(data.radios){
+          Object.entries(data.radios).forEach(([name,val]) => {
+            const sel = 'input[name="' + name + '"][value="' + String(val).replace(/"/g,'\\"') + '"]';
+            const el = document.querySelector(sel);
+            if(el) el.checked = true;
+          });
+        }
+      }catch(e){}
+    }
+
+    function code(){
+      const seed = [
+        currentDevice,
+        document.getElementById('osName').value.trim(),
+        document.getElementById('utility1').value.trim(),
+        document.getElementById('lensObject').value.trim(),
+        selectedRadio('securityItem') || 'SECURE',
+        document.getElementById('perfAction').value.trim()
+      ].join('|');
+      let h = 0;
+      for(let i=0;i<seed.length;i++){
+        h = ((h << 5) - h) + seed.charCodeAt(i);
+        h |= 0;
+      }
+      return 'DSC-' + String(Math.abs(h)).padStart(7,'0').slice(0,7);
+    }
+
+    function setFeedback(n, ok, msg){
+      const el = document.getElementById('fb' + n);
+      el.className = 'feedback ' + (ok ? 'ok' : 'warn');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function updateUI(){
+      const done = Object.values(state).filter(Boolean).length;
+      document.getElementById('progressFill').style.width = (done / 6 * 100) + '%';
+      document.getElementById('progressText').textContent = done + ' of 6 missions completed';
+      document.getElementById('missionsDoneStat').textContent = done;
+      document.getElementById('deviceTypeStat').textContent = currentDevice;
+      document.getElementById('statusStat').textContent = done === 6 ? 'Complete' : 'In progress';
+      document.getElementById('finalBox').style.display = done === 6 ? 'block' : 'none';
+      document.getElementById('lockedBox').style.display = done === 6 ? 'none' : 'block';
+      document.getElementById('completionCode').textContent = code();
+      for(let n=1;n<=6;n++){
+        const sec = document.getElementById('mission' + n);
+        sec.classList.toggle('done', !!state[n]);
+        const mark = sec.querySelector('.checkpoint');
+        mark.innerHTML = state[n] ? '<span class="done-mark">✓</span> Completed' : 'Checkpoint ' + n;
+      }
+      document.getElementById('deviceType').value = currentDevice;
+      saveProgress();
+    }
+
+    function checkMission(n){
+      let ok = false, msg = '';
+      if(n === 1){
+        ok = hasText('deviceType') && hasText('osName') && hasText('ram') && hasText('storage');
+        msg = ok ? 'Great job! You identified your device and system information.' : 'Please fill in all four fields to complete this mission.';
+      }else if(n === 2){
+        ok = !!selectedRadio('storageCat') && hasText('cleanup') && hasText('storageTip');
+        msg = ok ? 'Nice! You examined storage and completed a safe cleanup step.' : 'Please choose a storage category and complete both reflection fields.';
+      }else if(n === 3){
+        ok = hasText('utility1') && hasText('utility2') && hasText('utilityUse') && hasText('utilityRate');
+        msg = ok ? 'Excellent! You explored Snipping Tool and Voice Typing.' : 'Please complete all fields for the utility explorer.';
+      }else if(n === 4){
+        ok = hasText('lensObject') && hasText('lensAction') && hasText('lensResult') && hasText('lensUse');
+        msg = ok ? 'Great! You explored Google Lens and reflected on how it could help you.' : 'Please complete all Google Lens reflection fields.';
+      }else if(n === 5){
+        ok = !!selectedRadio('securityItem') && hasText('securityLearn') && hasText('securityReason');
+        msg = ok ? 'Perfect! You checked security settings and confirmed an improvement.' : 'Please select a security item and complete both reflection fields.';
+      }else if(n === 6){
+        ok = hasText('perfAction') && hasText('perfBenefit') && hasText('perfApp') && hasText('perfLearn');
+        msg = ok ? 'Great! You explored a safe way to improve performance.' : 'Please complete all performance fields.';
+      }
+      state[n] = ok;
+      setFeedback(n, ok, msg);
+      updateUI();
+    }
+
+    function resetMission(n){
+      state[n] = false;
+      const mission = document.getElementById('mission' + n);
+      mission.querySelectorAll('input[type="text"], textarea, select').forEach(el => el.value = '');
+      mission.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      mission.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+      const fb = document.getElementById('fb' + n);
+      fb.style.display = 'none';
+      updateUI();
+    }
+
+    document.addEventListener('click', (e) => {
+      const check = e.target.closest('[data-check]');
+      const reset = e.target.closest('[data-reset]');
+      const deviceBtn = e.target.closest('.device-btn');
+      if(check) checkMission(Number(check.dataset.check));
+      if(reset) resetMission(Number(reset.dataset.reset));
+      if(deviceBtn){
+        currentDevice = deviceBtn.dataset.device;
+        deviceButtons.forEach(b => b.classList.toggle('active', b === deviceBtn));
+        updateUI();
+      }
+    });
+
+    ['deviceType','osName','ram','storage','cleanup','storageTip','utility1','utility2','utilityUse','utilityRate','lensObject','lensAction','lensResult','lensUse','securityLearn','securityReason','perfAction','perfBenefit','perfApp','perfLearn']
+      .forEach(id => document.getElementById(id).addEventListener('input', () => { saveProgress(); updateUI(); }));
+
+    ['storageCat','securityItem'].forEach(name => {
+      document.querySelectorAll('input[name="' + name + '"]').forEach(el => {
+        el.addEventListener('change', () => { updateChoiceStyles(name); saveProgress(); updateUI(); });
+      });
+      updateChoiceStyles(name);
+    });
+
+    loadProgress();
+    deviceButtons.forEach(b => b.classList.toggle('active', b.dataset.device === currentDevice));
+    updateUI();
+  </script>
+</body>
+</html>
