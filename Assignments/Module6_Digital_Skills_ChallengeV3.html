@@ -608,7 +608,7 @@
             <div class="badge" style="margin-top:0">Challenge complete</div>
             <h3 style="margin:10px 0 8px">You finished all 6 missions!</h3>
             <div class="small">Copy this code into the Canvas quiz:</div>
-            <div class="code" id="completionCode">DSC-READY</div>
+            <div class="code" id="completionCode">M6-DIGITAL-2026</div>
             <div class="helper">Keep this code private and submit it on Canvas Module #6 checkpoint.</div>
           </div>
 
@@ -708,21 +708,11 @@
       }catch(e){}
     }
 
+    // Instructor setting: change this one value when you want a new Canvas completion code.
+    const COMPLETION_CODE = 'CSE180-AI-2026';
+
     function code(){
-      const seed = [
-        currentDevice,
-        document.getElementById('osName').value.trim(),
-        document.getElementById('utility1').value.trim(),
-        document.getElementById('lensObject').value.trim(),
-        selectedRadio('securityItem') || 'SECURE',
-        document.getElementById('perfAction').value.trim()
-      ].join('|');
-      let h = 0;
-      for(let i=0;i<seed.length;i++){
-        h = ((h << 5) - h) + seed.charCodeAt(i);
-        h |= 0;
-      }
-      return 'DSC-' + String(Math.abs(h)).padStart(7,'0').slice(0,7);
+      return COMPLETION_CODE;
     }
 
     function setFeedback(n, ok, msg){
